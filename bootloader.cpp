@@ -114,7 +114,7 @@ int TwoWireCallback(uint8_t address, uint8_t *data, uint8_t len, uint8_t maxLen)
 			}
 			break;
 		case FUNCTION_READ_PAGE:
-			if (len == 9 && checkDeviceID(data+2)) {
+			if (len == 10 && checkDeviceID(data+2)) {
 				uint32_t address = getUInt32(data+4);
 				uint8_t len = data[8];
 				return selfProgram.readPage(address, data, len);

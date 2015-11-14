@@ -71,19 +71,21 @@ int SelfProgram::getPageSize() {
 void SelfProgram::erasePage(uint32_t address) {
 }
 
-int SelfProgram::readPage(uint32_t address, uint8_t *data, uint8_t len) {
-	if (nvm_read_buffer(address, data, len) == STATUS_OK) {
-		return len;
-	}
-	
-	return 0;
-}
-
 uint8_t pageBuffer[64];
 uint32_t pageAddress;
 
+int SelfProgram::readPage(uint32_t address, uint8_t *data, uint8_t len) {
+	for (int i=0; i < len; i++) {
+		data[i] = ((uint8_t*)address)[i];
+	}
+	
+	return len;
+}
+
+
+
 void SelfProgram::writePage(uint32_t address, uint8_t *buffer, uint8_t len) {
-	if (_safeMode and (address < APP_START_ADDRESS or address >= 256*1024)) {
+	if (_safeMode and (address < APP_START_ADDRESS or address+len >= 256*1024)) {
 		return;
 	}
 	
