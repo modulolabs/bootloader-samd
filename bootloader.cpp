@@ -59,7 +59,7 @@ uint16_t getUInt16(uint8_t *data) {
 	return data[0] | (data[1] << 8);
 }
 
-uint16_t getUInt32(uint8_t *data) {
+uint32_t getUInt32(uint8_t *data) {
 	return data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
 }
 
@@ -121,8 +121,8 @@ int TwoWireCallback(uint8_t address, uint8_t *data, uint8_t len, uint8_t maxLen)
 			}
 			break;
 		case FUNCTION_ERASE_PAGE:
-			if (len == 9 && checkDeviceID(data+1)) {	
-				uint32_t address = getUInt32(data+3);
+			if (len == 9 && checkDeviceID(data+2)) {	
+				uint32_t address = getUInt32(data+4);
 				selfProgram.erasePage(address);
 			}
 			break;
@@ -133,24 +133,18 @@ int TwoWireCallback(uint8_t address, uint8_t *data, uint8_t len, uint8_t maxLen)
 			}
 			break;
 		case FUNCTION_READ_EEPROM:
-			if (len == 6 && checkDeviceID(data+1)) {
-				uint16_t address = getUInt16(data+3);
-				uint16_t eeLen = data[5];
-				
-				if (eeLen > maxLen) {
-					return 0;
-				}
-				
-				selfProgram.readEEPROM(data, (void*)address, eeLen);
-			
+			if (len == 10 && checkDeviceID(data+2)) {
+				uint32_t address = getUInt32(data+4);
+				uint8_t len = data[8];
+				selfProgram.readEEPROM(address, data, len);
 				return len;
 			}
 			break;
 		case FUNCTION_WRITE_EEPROM:
-			if (len >= 5  && checkDeviceID(data+1)) {
-				volatile uint16_t address = getUInt16(data+3);
+			if (len >= 9  && checkDeviceID(data+2)) {
+				uint16_t address = getUInt32(data+4);
 				
-				selfProgram.writeEEPROM(data+5, (void*)address, len-5);
+				selfProgram.writeEEPROM(address, data+8, len-9);
 			}
 			break;
 		case FUNCTION_SET_BOOTLOADER_SAFE_MODE:
@@ -162,6 +156,7 @@ int TwoWireCallback(uint8_t address, uint8_t *data, uint8_t len, uint8_t maxLen)
 	
 	return 0;
 }
+
 
 int main(void)
 {
