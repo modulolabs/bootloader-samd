@@ -6,10 +6,13 @@
  */ 
 
 #include "SelfProgram.h"
+#include "ModuloInfo.h"
 #include "asf.h"
 
 #define APP_START_ADDRESS          0x00002000
 #define LED_PIN 15
+
+extern ModuloInfo moduloInfo;
 
 SelfProgram::SelfProgram() : _deviceID(0xFFFF), _safeMode(true)  {
 }
@@ -19,27 +22,16 @@ void SelfProgram::setSafeMode(bool safeMode) {
 }
 
 void SelfProgram::loadDeviceID() {
-	// Extract the serial number from the specific addresses according to the data sheet
-	uint32_t serialNum[] = {
-		*(uint32_t*)(0x0080A00C),
-		*(uint32_t*)(0x0080A040),
-		*(uint32_t*)(0x0080A044),
-	    *(uint32_t*)(0x0080A048)};
-	
-	// Hash the 128 bit unique ID into a 16 bit unique-ish ID
-	_deviceID = 0;
-	for (int i=0; i < 4; i++) {
-		_deviceID ^= (serialNum[i] & 0xFFFF);
-		_deviceID ^= (serialNum[i] >> 16);
-	}
+	LoadModuloInfo();
 }
 	
 uint16_t SelfProgram::getDeviceID() {
-	return _deviceID;
+	return moduloInfo.id;
 }
 
 void SelfProgram::storeDeviceID(uint16_t deviceID) {
-
+	moduloInfo.id = deviceID;
+	SaveModuloInfo();
 }
 
 uint32_t SelfProgram::getSignature() {

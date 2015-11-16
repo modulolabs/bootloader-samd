@@ -133,19 +133,8 @@ int TwoWireCallback(uint8_t address, uint8_t *data, uint8_t len, uint8_t maxLen)
 			}
 			break;
 		case FUNCTION_READ_EEPROM:
-			if (len == 10 && checkDeviceID(data+2)) {
-				uint32_t address = getUInt32(data+4);
-				uint8_t len = data[8];
-				selfProgram.readEEPROM(address, data, len);
-				return len;
-			}
 			break;
 		case FUNCTION_WRITE_EEPROM:
-			if (len >= 9  && checkDeviceID(data+2)) {
-				uint16_t address = getUInt32(data+4);
-				
-				selfProgram.writeEEPROM(address, data+8, len-9);
-			}
 			break;
 		case FUNCTION_SET_BOOTLOADER_SAFE_MODE:
 			if (len == 4 && checkDeviceID(data+1)) {
