@@ -17,12 +17,6 @@ public:
 
 	void setSafeMode(bool safeMode);
 
-	void loadDeviceID();
-	
-	uint16_t getDeviceID();
-
-	void storeDeviceID(uint16_t deviceID);
-
 	uint32_t getSignature();
 
 	void readEEPROM(uint8_t *data, void *address, int eeLen);

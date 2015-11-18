@@ -11,6 +11,7 @@
 
 #include "TwoWire.h"
 #include "SelfProgram.h"
+#include "ModuloInfo.h"
 #include "asf.h"
 
 #define BOOTLOADER_VERSION 1
@@ -64,7 +65,7 @@ uint32_t getUInt32(uint8_t *data) {
 }
 
 int checkDeviceID(uint8_t *data) {
-	return (getUInt16(data) == selfProgram.getDeviceID());
+	return (getUInt16(data) == GetDeviceID());
 }
 
 int TwoWireCallback(uint8_t address, uint8_t *data, uint8_t len, uint8_t maxLen) {
@@ -89,7 +90,7 @@ int TwoWireCallback(uint8_t address, uint8_t *data, uint8_t len, uint8_t maxLen)
 		case FUNCTION_GET_NEXT_DEVICE_ID:
 			if (len == 5) {
 				uint16_t previousID = getUInt16(data+2);
-				uint16_t deviceID = selfProgram.getDeviceID();
+				uint16_t deviceID = GetDeviceID();
 				if (previousID < deviceID) {
 					// Return the device ID
 					data[0] = deviceID & 0xFF;
@@ -100,7 +101,7 @@ int TwoWireCallback(uint8_t address, uint8_t *data, uint8_t len, uint8_t maxLen)
 			break;
 		case FUNCTION_SET_DEVICE_ID:
 			if (len == 7 && checkDeviceID(data+2)) {
-				selfProgram.storeDeviceID(getUInt16(data+4));
+				SetDeviceID(getUInt16(data+4));
 			}
 			break;
 
@@ -166,7 +167,7 @@ int main(void)
 	nvm_set_config(&config);
 	
 
-	selfProgram.loadDeviceID();
+	LoadModuloInfo();
 	TwoWireInit(9);
 	
 		

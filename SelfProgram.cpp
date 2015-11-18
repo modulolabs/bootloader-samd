@@ -12,26 +12,11 @@
 #define APP_START_ADDRESS          0x00002000
 #define LED_PIN 15
 
-extern ModuloInfo moduloInfo;
-
 SelfProgram::SelfProgram() : _deviceID(0xFFFF), _safeMode(true)  {
 }
 
 void SelfProgram::setSafeMode(bool safeMode) {
 	_safeMode = safeMode;
-}
-
-void SelfProgram::loadDeviceID() {
-	LoadModuloInfo();
-}
-	
-uint16_t SelfProgram::getDeviceID() {
-	return moduloInfo.id;
-}
-
-void SelfProgram::storeDeviceID(uint16_t deviceID) {
-	moduloInfo.id = deviceID;
-	SaveModuloInfo();
 }
 
 uint32_t SelfProgram::getSignature() {

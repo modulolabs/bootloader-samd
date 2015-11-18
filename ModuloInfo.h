@@ -23,6 +23,7 @@ struct ModuloInfo {
 	ModuloInfo moduloInfo = {.id=0xFFFF, .version=moduloVersion, moduloType};
 
 void LoadModuloInfo();
-void SaveModuloInfo();
+void SetDeviceID(uint16_t deviceID);
+uint16_t GetDeviceID();
 
 #endif /* MODULOINFO_H_ */
